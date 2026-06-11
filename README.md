@@ -6,10 +6,11 @@
 
 *Coding in Cursor? Listening to Nass El Ghiwane? Your visitors see it, live, in your style.*
 
+[![validate themes](https://github.com/abdessattar23/presence-card/actions/workflows/validate.yml/badge.svg)](https://github.com/abdessattar23/presence-card/actions/workflows/validate.yml)
+[![release](https://img.shields.io/github/v/tag/abdessattar23/presence-card?label=release&color=e8b13c)](https://github.com/abdessattar23/presence-card/releases)
 [![license: MIT](https://img.shields.io/badge/license-MIT-2ea44f)](LICENSE)
-[![PRs welcome](https://img.shields.io/badge/PRs-welcome-e8b13c)](#-add-your-own-theme)
-[![deploy with Vercel](https://img.shields.io/badge/deploy-vercel-black)](https://vercel.com/new)
 [![themes](https://img.shields.io/badge/themes-15-1f9e8e)](#-themes)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-e8b13c)](CONTRIBUTING.md)
 
 <img src="https://presence-neon.vercel.app/api/card?theme=zellij&demo" alt="presence card, zellij theme" />
 
