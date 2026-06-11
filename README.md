@@ -88,6 +88,10 @@ pip install winsdk pywin32 psutil requests
 copy presence.config.example.json presence.config.json   # fill in your Upstash creds
 python presence_agent.py
 ```
+
+Prefer no terminal? Run it in the **system tray** (`pythonw presence_tray.py`)
+or build a single double-click **`presence.exe`** with pause + run-at-login —
+see [windows/README.md](windows/README.md).
 </details>
 
 <details><summary><b>macOS</b></summary>
