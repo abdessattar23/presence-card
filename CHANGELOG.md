@@ -6,6 +6,8 @@ to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.1] — 2026-06-11
+
 ### Added
 - **Windows background app**: `presence_tray.py` runs the agent in the system
   tray (no console) with pause and a run-at-login toggle, and a PyInstaller
@@ -34,5 +36,6 @@ First public release.
 - **CI** validating every theme on each PR, plus issue templates and a PR
   checklist.
 
-[Unreleased]: https://github.com/abdessattar23/presence-card/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/abdessattar23/presence-card/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/abdessattar23/presence-card/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/abdessattar23/presence-card/releases/tag/v0.1.0
