@@ -3,3 +3,9 @@ presence.config.json
 previews/
 __pycache__/
 node_modules/
+
+# PyInstaller build artifacts
+windows/build/
+windows/dist/
+windows/*.spec
+*.exe
