@@ -47,8 +47,16 @@ dancing equalizer, blinking cursor, all pure SVG/CSS, no JavaScript.
 | `catppuccin` | mocha — soft pastels for the comfy crowd |
 | `nord` | arctic calm, aurora overhead |
 | `tokyo-night` | neon city after the rain |
+| `solarized` | the precision classic — base03 teal, yellow + cyan |
+| `everforest` | soft warm forest, low contrast |
+| `matrix` | digital rain — phosphor green on black |
+| `gruvbox` | warm retro — amber and aqua |
+| `dracula` | the classic — pink, cyan, purple |
+| `rose-pine` | soho vibes — muted rose and foam |
 | `paper` | field notes — ruled lines, red margin |
 | `gameboy` | DMG-01 — four shades of 1989, `POWER ON` |
+
+15 themes and counting — `npm run preview` renders the whole gallery locally.
 
 Preview any theme without an agent running — append `&demo`:
 
@@ -70,16 +78,30 @@ grab the REST URL + token.
 [Vercel](https://vercel.com/new) → add env vars
 `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`.
 
-**3 · Run the agent (Windows):**
+**3 · Run the agent:**
+
+<details open><summary><b>Windows</b></summary>
 
 ```powershell
 pip install winsdk pywin32 psutil requests
 copy presence.config.example.json presence.config.json   # fill in your Upstash creds
 python presence_agent.py
 ```
+</details>
 
-(Or skip the file and set `PRESENCE_UPSTASH_URL` / `PRESENCE_UPSTASH_TOKEN`
-as environment variables. Secrets never live in the code.)
+<details><summary><b>macOS</b></summary>
+
+```bash
+brew install nowplaying-cli            # optional — enables the music row
+cp presence.config.example.json presence.config.json   # fill in your Upstash creds
+python3 presence_agent_macos.py
+```
+Stdlib only, no pip installs.
+</details>
+
+(Or skip the config file and set `PRESENCE_UPSTASH_URL` / `PRESENCE_UPSTASH_TOKEN`
+as environment variables. Secrets never live in the code. Linux agent —
+`playerctl` + the active window — is on the roadmap; PRs welcome.)
 
 The agent only pushes on **change** plus a 60 s heartbeat — you'll stay far
 under any free-tier limit.
