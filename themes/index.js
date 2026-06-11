@@ -13,6 +13,7 @@ import paper from "./paper.js";
 import tokyoNight from "./tokyo-night.js";
 import solarized from "./solarized.js";
 import everforest from "./everforest.js";
+import matrix from "./matrix.js";
 import gruvbox from "./gruvbox.js";
 import dracula from "./dracula.js";
 import rosePine from "./rose-pine.js";
@@ -20,7 +21,7 @@ import gameboy from "./gameboy.js";
 
 const ALL = [
   terminal, zellij, riad, sahara,
-  catppuccin, nord, tokyoNight, solarized, everforest, gruvbox, dracula, rosePine, paper, gameboy,
+  catppuccin, nord, tokyoNight, solarized, everforest, matrix, gruvbox, dracula, rosePine, paper, gameboy,
 ];
 
 export const themes = Object.fromEntries(ALL.map((t) => [t.name, t]));
