@@ -21,6 +21,7 @@ import winreg
 import pystray
 from PIL import Image, ImageDraw
 
+import presence_config
 # reuse the agent's brains — importing does NOT start the console loop
 from presence_agent import (
     get_foreground, get_media, publish, fingerprint,
@@ -28,7 +29,7 @@ from presence_agent import (
 )
 
 APP_NAME = "Presence"
-CARD_URL = os.environ.get("PRESENCE_CARD_URL", "https://presence-neon.vercel.app/?theme=zellij")
+CARD_URL = presence_config.get().get("card_url") or "https://presence-neon.vercel.app/?theme=zellij"
 RUN_KEY  = r"Software\Microsoft\Windows\CurrentVersion\Run"
 
 _paused = threading.Event()
@@ -117,6 +118,7 @@ def _agent_loop():
 
 
 def main():
+    presence_config.ensure_interactive()       # first run: pop the setup dialog
     threading.Thread(target=_agent_loop, daemon=True).start()
     menu = pystray.Menu(
         pystray.MenuItem(lambda item: _state["line"], None, enabled=False),

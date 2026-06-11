@@ -28,15 +28,8 @@ import urllib.request
 from pathlib import Path
 
 # ============================ CONFIG =======================================
-# Secrets live outside this file (public-repo safe). Env vars win; otherwise
-# presence.config.json next to this script (gitignored).
-_cfg = {}
-_cfg_path = Path(__file__).with_name("presence.config.json")
-if _cfg_path.exists():
-    _cfg = json.loads(_cfg_path.read_text(encoding="utf-8"))
-
-UPSTASH_REST_URL   = os.environ.get("PRESENCE_UPSTASH_URL",   _cfg.get("upstash_url", ""))
-UPSTASH_REST_TOKEN = os.environ.get("PRESENCE_UPSTASH_TOKEN", _cfg.get("upstash_token", ""))
+# Credentials come from presence_config (env vars or presence.config.json).
+import presence_config
 
 PUBLISH_EDITOR = True          # publish app name (Cursor/VS Code). NEVER filenames.
 HEARTBEAT_SEC  = 60            # push at least this often even if nothing changed
@@ -111,13 +104,15 @@ def get_media():
 
 
 def push_upstash(value: str):
-    if not (UPSTASH_REST_URL and UPSTASH_REST_TOKEN):
+    c = presence_config.get()
+    url, token = c.get("upstash_url"), c.get("upstash_token")
+    if not (url and token):
         return
     try:
         req = urllib.request.Request(
-            f"{UPSTASH_REST_URL.rstrip('/')}/set/presence",
+            f"{url.rstrip('/')}/set/presence",
             data=value.encode("utf-8"),
-            headers={"Authorization": f"Bearer {UPSTASH_REST_TOKEN}"},
+            headers={"Authorization": f"Bearer {token}"},
             method="POST",
         )
         urllib.request.urlopen(req, timeout=8).read()
@@ -130,7 +125,7 @@ def fingerprint(p):
 
 
 def main():
-    if not (UPSTASH_REST_URL and UPSTASH_REST_TOKEN):
+    if not presence_config.has_creds():
         print("no Upstash creds — set PRESENCE_UPSTASH_URL/TOKEN or fill presence.config.json")
     if not _HAS_NOWPLAYING:
         print("note: nowplaying-cli not found — music row disabled (brew install nowplaying-cli)")

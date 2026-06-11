@@ -36,25 +36,10 @@ from winsdk.windows.media.control import (
 )
 
 # ============================ CONFIG =======================================
-# Secrets live OUTSIDE this file so the repo can be public. Provide them via
-# environment variables, or a presence.config.json next to this script
-# (gitignored — see presence.config.example.json). Env vars win.
+# Credentials are loaded by presence_config (env vars or presence.config.json,
+# never committed). First run with no creds pops a setup dialog.
+import presence_config
 
-_cfg = {}
-_cfg_path = Path(__file__).with_name("presence.config.json")
-if _cfg_path.exists():
-    _cfg = json.loads(_cfg_path.read_text(encoding="utf-8"))
-
-# --- Upstash (snappy / Vercel card) ---
-UPSTASH_REST_URL   = os.environ.get("PRESENCE_UPSTASH_URL",   _cfg.get("upstash_url", ""))
-UPSTASH_REST_TOKEN = os.environ.get("PRESENCE_UPSTASH_TOKEN", _cfg.get("upstash_token", ""))
-
-# --- GitHub gist (no new accounts / GitHub Pages card) ---
-GIST_ID       = os.environ.get("PRESENCE_GIST_ID",    _cfg.get("gist_id", ""))
-GIST_TOKEN    = os.environ.get("PRESENCE_GIST_TOKEN", _cfg.get("gist_token", ""))
-GIST_FILENAME = _cfg.get("gist_filename", "status.json")
-
-# --- behaviour ---
 PUBLISH_EDITOR = True          # publish app name (Cursor/VS Code). NEVER filenames.
 SERVE_LOCAL    = True          # also expose http://127.0.0.1:8787/status for testing
 HEARTBEAT_SEC  = 60            # push at least this often even if nothing changed
@@ -135,12 +120,14 @@ async def get_media():
 
 # ---- publishing -----------------------------------------------------------
 def push_upstash(value: str):
-    if not (UPSTASH_REST_URL and UPSTASH_REST_TOKEN):
+    c = presence_config.get()
+    url, token = c.get("upstash_url"), c.get("upstash_token")
+    if not (url and token):
         return
     try:
         requests.post(
-            f"{UPSTASH_REST_URL.rstrip('/')}/set/presence",
-            headers={"Authorization": f"Bearer {UPSTASH_REST_TOKEN}"},
+            f"{url.rstrip('/')}/set/presence",
+            headers={"Authorization": f"Bearer {token}"},
             data=value.encode("utf-8"),
             timeout=8,
         )
@@ -149,16 +136,18 @@ def push_upstash(value: str):
 
 
 def push_gist(value: str):
-    if not (GIST_ID and GIST_TOKEN):
+    c = presence_config.get()
+    gid, gtok = c.get("gist_id"), c.get("gist_token")
+    if not (gid and gtok):
         return
     try:
         requests.patch(
-            f"https://api.github.com/gists/{GIST_ID}",
+            f"https://api.github.com/gists/{gid}",
             headers={
-                "Authorization": f"Bearer {GIST_TOKEN}",
+                "Authorization": f"Bearer {gtok}",
                 "Accept": "application/vnd.github+json",
             },
-            json={"files": {GIST_FILENAME: {"content": value}}},
+            json={"files": {c.get("gist_filename", "status.json"): {"content": value}}},
             timeout=8,
         )
     except Exception as e:
@@ -201,13 +190,15 @@ def fingerprint(p):
 
 
 async def main():
+    presence_config.ensure_interactive()      # first-run: prompt for creds
     if SERVE_LOCAL:
         threading.Thread(target=serve, daemon=True).start()
         print("local test endpoint: http://127.0.0.1:8787/status")
+    c = presence_config.get()
     targets = []
-    if UPSTASH_REST_URL: targets.append("upstash")
-    if GIST_ID: targets.append("gist")
-    print("publishing to:", ", ".join(targets) or "(none — fill CONFIG)", " | Ctrl+C to stop\n")
+    if c.get("upstash_url"): targets.append("upstash")
+    if c.get("gist_id"): targets.append("gist")
+    print("publishing to:", ", ".join(targets) or "(none — fill presence.config.json)", " | Ctrl+C to stop\n")
 
     last_fp = None
     last_push = 0.0
