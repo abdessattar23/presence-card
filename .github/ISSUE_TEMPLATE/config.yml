@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Add a theme (no issue needed)
+    url: https://github.com/abdessattar23/presence-card/blob/main/CONTRIBUTING.md
+    about: Copy the template, register it, open a PR. Takes about 10 minutes.

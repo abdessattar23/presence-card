@@ -1,0 +1,37 @@
+name: New theme request / proposal
+description: Suggest a theme — or tell us you're building one
+labels: ["theme"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Themes are the heart of this project. If you want to **build** it
+        yourself, you don't need an issue — just read
+        [CONTRIBUTING.md](../blob/main/CONTRIBUTING.md) and open a PR. Use this
+        for ideas you'd like to see, or to claim one so two people don't
+        duplicate work.
+  - type: input
+    id: name
+    attributes:
+      label: Theme name
+      placeholder: e.g. solarized, andalusia, synthwave-84
+    validations:
+      required: true
+  - type: textarea
+    id: vibe
+    attributes:
+      label: The vibe
+      description: Palette, mood, cultural reference, the colorscheme it's based on.
+    validations:
+      required: true
+  - type: input
+    id: ref
+    attributes:
+      label: Reference link
+      placeholder: link to the palette / colorscheme / inspiration
+  - type: checkboxes
+    id: build
+    attributes:
+      label: Building it?
+      options:
+        - label: I'd like to open the PR myself

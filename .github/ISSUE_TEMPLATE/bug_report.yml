@@ -1,0 +1,44 @@
+name: Bug report
+description: Something in the card or an agent isn't working right
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you expect, and what did you get instead?
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Where?
+      options:
+        - The SVG card (/api/card)
+        - The web card (index.html)
+        - An agent (desktop)
+        - Other / not sure
+    validations:
+      required: true
+  - type: input
+    id: theme
+    attributes:
+      label: Theme
+      placeholder: e.g. zellij
+  - type: dropdown
+    id: agent
+    attributes:
+      label: Agent OS (if relevant)
+      options: ["n/a", "Windows", "macOS", "Linux"]
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. open /api/card?theme=...
+        2. ...
+  - type: textarea
+    id: extra
+    attributes:
+      label: Screenshot / logs
+      description: A screenshot of the card or agent console output helps a lot.
