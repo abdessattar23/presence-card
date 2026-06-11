@@ -9,9 +9,9 @@
 [![license: MIT](https://img.shields.io/badge/license-MIT-2ea44f)](LICENSE)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-e8b13c)](#-add-your-own-theme)
 [![deploy with Vercel](https://img.shields.io/badge/deploy-vercel-black)](https://vercel.com/new)
-[![themes](https://img.shields.io/badge/themes-8-1f9e8e)](#-themes)
+[![themes](https://img.shields.io/badge/themes-15-1f9e8e)](#-themes)
 
-<img src="https://YOUR-APP.vercel.app/api/card?theme=zellij&demo" alt="presence card, zellij theme" />
+<img src="https://presence-neon.vercel.app/api/card?theme=zellij&demo" alt="presence card, zellij theme" />
 
 </div>
 
@@ -61,12 +61,12 @@ dancing equalizer, blinking cursor, all pure SVG/CSS, no JavaScript.
 Preview any theme without an agent running — append `&demo`:
 
 ```
-https://YOUR-APP.vercel.app/api/card?theme=riad&demo
+https://presence-neon.vercel.app/api/card?theme=riad&demo
 ```
 
 <div align="center">
-<img src="https://YOUR-APP.vercel.app/api/card?theme=riad&demo" width="49%" />
-<img src="https://YOUR-APP.vercel.app/api/card?theme=gameboy&demo" width="49%" />
+<img src="https://presence-neon.vercel.app/api/card?theme=riad&demo" width="49%" />
+<img src="https://presence-neon.vercel.app/api/card?theme=gameboy&demo" width="49%" />
 </div>
 
 ## 🚀 Quick start
@@ -121,7 +121,7 @@ under any free-tier limit.
 **GitHub profile README** — the card is an animated SVG, so it just works:
 
 ```markdown
-[![what I'm doing right now](https://YOUR-APP.vercel.app/api/card?theme=zellij)](https://your-site.com)
+[![what I'm doing right now](https://presence-neon.vercel.app/api/card?theme=zellij)](https://your-site.com)
 ```
 
 Light/dark aware:
@@ -129,8 +129,8 @@ Light/dark aware:
 ```html
 <picture>
   <source media="(prefers-color-scheme: dark)"
-          srcset="https://YOUR-APP.vercel.app/api/card?theme=zellij">
-  <img src="https://YOUR-APP.vercel.app/api/card?theme=riad"
+          srcset="https://presence-neon.vercel.app/api/card?theme=zellij">
+  <img src="https://presence-neon.vercel.app/api/card?theme=riad"
        alt="what I'm doing right now">
 </picture>
 ```
@@ -142,7 +142,7 @@ Light/dark aware:
 chrome and makes the background transparent):
 
 ```html
-<iframe src="https://YOUR-APP.vercel.app/?theme=zellij&embed"
+<iframe src="https://presence-neon.vercel.app/?theme=zellij&embed"
         width="600" height="330" frameborder="0" loading="lazy"
         title="live presence"></iframe>
 ```

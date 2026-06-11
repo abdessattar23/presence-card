@@ -3,7 +3,7 @@
 // Serves the presence card as an animated SVG, ready to drop into a GitHub
 // profile README:
 //
-//   [![presence](https://YOUR-APP.vercel.app/api/card?theme=zellij)](https://your-site.com)
+//   [![presence](https://presence-neon.vercel.app/api/card?theme=zellij)](https://your-site.com)
 //
 // `&demo` returns sample data — handy for theme previews and screenshots.
 // Note: GitHub proxies images through camo, which may cache for a couple of
