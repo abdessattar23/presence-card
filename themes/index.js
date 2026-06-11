@@ -11,6 +11,7 @@ import catppuccin from "./catppuccin.js";
 import nord from "./nord.js";
 import paper from "./paper.js";
 import tokyoNight from "./tokyo-night.js";
+import solarized from "./solarized.js";
 import gruvbox from "./gruvbox.js";
 import dracula from "./dracula.js";
 import rosePine from "./rose-pine.js";
@@ -18,7 +19,7 @@ import gameboy from "./gameboy.js";
 
 const ALL = [
   terminal, zellij, riad, sahara,
-  catppuccin, nord, tokyoNight, gruvbox, dracula, rosePine, paper, gameboy,
+  catppuccin, nord, tokyoNight, solarized, gruvbox, dracula, rosePine, paper, gameboy,
 ];
 
 export const themes = Object.fromEntries(ALL.map((t) => [t.name, t]));
