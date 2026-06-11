@@ -27,10 +27,10 @@
                                                     └────────────────────────┘
 ```
 
-A ~200-line Python agent reads the Windows media session (Spotify, YouTube in any
-browser, VLC — one interface) and the focused app, then publishes a **coarse,
-privacy-safe** status: `coding — Cursor`, the current track, nothing else.
-Window titles and filenames **never leave your machine**.
+A small Python agent — **Windows, macOS, and Linux** — reads your now-playing
+media (Spotify, YouTube in any browser, VLC, Apple Music…) and the focused app,
+then publishes a **coarse, privacy-safe** status: `coding — Cursor`, the current
+track, nothing else. Window titles and filenames **never leave your machine**.
 
 ## 🎨 Themes
 
@@ -99,9 +99,19 @@ python3 presence_agent_macos.py
 Stdlib only, no pip installs.
 </details>
 
+<details><summary><b>Linux</b></summary>
+
+```bash
+sudo apt install playerctl xdotool     # or your distro's equivalent
+cp presence.config.example.json presence.config.json   # fill in your Upstash creds
+python3 presence_agent_linux.py
+```
+Stdlib only. Media via MPRIS (`playerctl`); active window on X11 (`xdotool`),
+Sway, and Hyprland.
+</details>
+
 (Or skip the config file and set `PRESENCE_UPSTASH_URL` / `PRESENCE_UPSTASH_TOKEN`
-as environment variables. Secrets never live in the code. Linux agent —
-`playerctl` + the active window — is on the roadmap; PRs welcome.)
+as environment variables. Secrets never live in the code.)
 
 The agent only pushes on **change** plus a 60 s heartbeat — you'll stay far
 under any free-tier limit.
