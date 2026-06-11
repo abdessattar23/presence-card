@@ -10,6 +10,9 @@ to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - **Windows background app**: `presence_tray.py` runs the agent in the system
   tray (no console) with pause and a run-at-login toggle, and a PyInstaller
   build (`windows/build.ps1`) that produces a single `presence.exe`.
+- **CI exe builds**: a GitHub Actions workflow builds `presence.exe` on a
+  Windows runner and attaches it to every tagged release (also runnable on
+  demand from the Actions tab).
 
 ## [0.1.0] — 2026-06-11
 

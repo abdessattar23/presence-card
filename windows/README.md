@@ -25,7 +25,14 @@ pythonw presence_tray.py
 
 ## 3. A single presence.exe (no Python needed)
 
-Build it once:
+**Easiest:** grab `presence.exe` from the
+[Releases page](https://github.com/abdessattar23/presence-card/releases) — it's
+built by GitHub Actions on every version tag, so you don't need Python or a
+toolchain at all. (You can also trigger a build yourself from the **Actions →
+build windows exe → Run workflow** button and download it from the run's
+artifacts.)
+
+Or build it yourself:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File windows\build.ps1
