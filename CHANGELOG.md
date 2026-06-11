@@ -6,6 +6,16 @@ to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+- **Background services for macOS and Linux** — a launchd agent
+  (`macos/install.sh`) and a `systemd --user` unit (`linux/install.sh`) so the
+  agent runs at login with no terminal on every platform.
+- **First-run setup dialog** (Windows): the agent/tray prompts for Upstash
+  credentials on first launch and saves them, via the shared `presence_config`
+  module.
+- **Trustworthy exe**: the Windows build now embeds author/version metadata and
+  an app icon (`windows/version_info.txt`), with signing guidance in the docs.
+
 ## [0.1.1] — 2026-06-11
 
 ### Added

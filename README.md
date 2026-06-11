@@ -101,7 +101,8 @@ brew install nowplaying-cli            # optional — enables the music row
 cp presence.config.example.json presence.config.json   # fill in your Upstash creds
 python3 presence_agent_macos.py
 ```
-Stdlib only, no pip installs.
+Stdlib only, no pip installs. Run it at login with no terminal via launchd —
+see [macos/README.md](macos/README.md).
 </details>
 
 <details><summary><b>Linux</b></summary>
@@ -112,7 +113,8 @@ cp presence.config.example.json presence.config.json   # fill in your Upstash cr
 python3 presence_agent_linux.py
 ```
 Stdlib only. Media via MPRIS (`playerctl`); active window on X11 (`xdotool`),
-Sway, and Hyprland.
+Sway, and Hyprland. Run it as a `systemd --user` service —
+see [linux/README.md](linux/README.md).
 </details>
 
 (Or skip the config file and set `PRESENCE_UPSTASH_URL` / `PRESENCE_UPSTASH_TOKEN`
