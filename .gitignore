@@ -8,4 +8,5 @@ node_modules/
 windows/build/
 windows/dist/
 windows/*.spec
+windows/icon.ico
 *.exe

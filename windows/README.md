@@ -42,9 +42,28 @@ Out comes `windows\dist\presence.exe` — a self-contained, no-terminal app.
 Double-click to run; it lands in the tray. Use **Run at login** in the menu
 (or drop a shortcut in `shell:startup`) to have it start with Windows.
 
-> First launch is a little slow (PyInstaller unpacks to a temp dir). The build
-> is unsigned, so SmartScreen may warn the first time — "More info → Run
-> anyway". Sign it with your own cert if you distribute it widely.
+> First launch is a little slow (PyInstaller unpacks to a temp dir).
+
+### Trust & signing
+
+The exe carries proper **version metadata** — right-click → *Properties →
+Details* shows the author (Mohammed Abdessetar Elyagoubi), product, version,
+and MIT copyright instead of blank fields — and a real app icon. It's also
+**reproducible**: anyone can rebuild it from this source with `build.ps1` and
+the GitHub Actions workflow builds it in the open.
+
+What metadata does **not** do is remove the SmartScreen prompt — only an
+**Authenticode signature** from a code-signing certificate does that, and that
+requires a paid cert (and reputation built over downloads). The build is
+intentionally unsigned; to sign your own copy:
+
+```powershell
+signtool sign /fd SHA256 /a /tr http://timestamp.digicert.com /td SHA256 windows\dist\presence.exe
+```
+
+Until then, SmartScreen may warn on first run — *More info → Run anyway*. If you
+don't want to trust a prebuilt binary at all, run option 2 (`pythonw`) or build
+it yourself from source.
 
 ### Config
 
