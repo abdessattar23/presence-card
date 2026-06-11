@@ -1,0 +1,5 @@
+.vercel
+presence.config.json
+previews/
+__pycache__/
+node_modules/

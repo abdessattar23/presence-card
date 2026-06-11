@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>presence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=VT323&family=Reem+Kufi:wght@400;600&display=swap" rel="stylesheet" />
+<style>
+  /* ============================================================
+     presence — a tiny live-status card.
+     Backend:  STATUS_URL in the <script> below
+               Vercel: "/api/status"   |   self-hosted JSON endpoint
+     URL params:
+       ?theme=zellij     pick a theme (also persisted via localStorage)
+       ?embed            chrome-less + transparent, for <iframe> embedding
+       ?demo             fake data, for previews
+     Themes are single files in themes/ — this page imports the same
+     registry the SVG endpoint uses and turns each theme's tokens into
+     the CSS variables below. Theme-specific structural CSS (tile bands,
+     scanlines, auroras…) is injected into #theme-css on switch.
+     ============================================================ */
+
+  :root{
+    --bg:#05070a; --panel:#0a0f15; --panel2:#070a0e; --border:#15351f;
+    --text:#39ff9e; --dim:#1f7a52;
+    --accent:#ffb454; --accent-dim:#7a5a26; --artist:#7a5a26;
+    --ok:#39ff9e; --bad:#ff5a5a;
+    --radius:14px; --glow:0%; --band:0px;
+    --font-d:"IBM Plex Mono",monospace; --font-b:"IBM Plex Mono",monospace;
+    --val-size:26px;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:
+      radial-gradient(120% 90% at 50% 0%, color-mix(in srgb, var(--panel) 70%, var(--bg)) 0%, var(--bg) 60%),
+      var(--bg);
+    display:flex;align-items:center;justify-content:center;
+    padding:24px;
+    font-family:var(--font-b);
+    color:var(--text);
+    min-height:100%;
+    overflow:hidden;
+    transition:background .35s ease;
+  }
+
+  .panel{
+    position:relative;z-index:1;overflow:hidden;
+    width:min(580px,100%);
+    background:linear-gradient(180deg,var(--panel),var(--panel2));
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:24px 28px 20px calc(var(--band) + 28px);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--text) 4%, transparent) inset,
+      0 30px 80px -30px rgba(0,0,0,.65),
+      0 0 60px -20px color-mix(in srgb, var(--text) calc(var(--glow) / 3), transparent);
+  }
+  /* left decoration band (zellij / riad tilework) */
+  .panel::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:var(--band);
+    background:var(--band-img);
+    border-right:2px solid var(--border);
+    display:var(--band-display,none);
+  }
+  .panel::after{
+    content:"";position:absolute;left:calc(var(--band) + 5px);top:0;bottom:0;width:1px;
+    background:var(--border);
+    display:var(--band-display,none);
+  }
+
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+  .brand{font-family:var(--font-b);font-size:13px;letter-spacing:3px;color:var(--dim)}
+  .brand small{display:none}
+
+  .live{display:flex;align-items:center;gap:8px;font-size:12px;letter-spacing:2px;color:var(--dim)}
+  .dot{width:9px;height:9px;border-radius:50%;background:var(--dim)}
+  .online .dot{background:var(--ok);animation:pulse 1.6s infinite}
+  .online .live{color:var(--ok)}
+  .offline .dot{background:var(--bad)}
+  .offline .live{color:var(--bad)}
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 color-mix(in srgb, var(--ok) 45%, transparent)}
+    70%{box-shadow:0 0 0 8px transparent}
+    100%{box-shadow:0 0 0 0 transparent}}
+
+  /* the headline: what's happening right now */
+  .row{margin:18px 0;line-height:1.35}
+  .key{font-size:13px;letter-spacing:1.5px;color:var(--accent)}
+  .val{font-family:var(--font-d);font-size:var(--val-size);font-weight:700;margin-top:2px;
+    text-shadow:0 0 7px color-mix(in srgb, var(--text) var(--glow), transparent);word-break:break-word}
+
+  .media{display:flex;gap:14px;align-items:flex-start;margin:20px 0 4px}
+  .media .key{font-size:10px;letter-spacing:2px;color:var(--accent-dim);text-transform:uppercase}
+  .media .val{font-size:20px;color:var(--accent);font-weight:600;
+    text-shadow:0 0 7px color-mix(in srgb, var(--accent) var(--glow), transparent)}
+  .media .body{flex:1;min-width:0}
+  .src{font-size:10px;letter-spacing:2px;color:var(--accent-dim);margin-top:3px}
+  .artist{font-size:13px;font-family:var(--font-b);color:var(--artist);
+    margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  .eq{display:inline-flex;gap:3px;align-items:flex-end;height:32px;padding-top:6px}
+  .eq span{width:4px;height:30%;background:var(--accent);border-radius:1px;
+    box-shadow:0 0 6px color-mix(in srgb, var(--accent) calc(var(--glow) * 1.5), transparent);
+    animation:eq .9s ease-in-out infinite}
+  .eq span:nth-child(2){animation-delay:.15s}
+  .eq span:nth-child(3){animation-delay:.35s}
+  .eq span:nth-child(4){animation-delay:.55s}
+  .eq span:nth-child(5){animation-delay:.25s}
+  @keyframes eq{0%,100%{height:25%}50%{height:100%}}
+  .paused .eq span{animation-play-state:paused;height:18%;opacity:.5}
+
+  .footer{margin-top:16px;padding-top:12px;border-top:1px solid color-mix(in srgb, var(--border) 70%, transparent);
+    font-size:11px;letter-spacing:1px;color:var(--dim);display:flex;
+    justify-content:space-between;align-items:center}
+  .cursor{display:inline-block;width:10px;height:20px;background:currentColor;
+    margin-left:3px;vertical-align:-3px;animation:blink 1.05s steps(1) infinite;
+    box-shadow:0 0 6px color-mix(in srgb, currentColor var(--glow), transparent)}
+  @keyframes blink{50%{opacity:0}}
+  .muted{color:var(--dim)}
+
+  @media (prefers-reduced-motion:reduce){*{animation:none!important}}
+
+  /* ================= theme switcher ================================ */
+  #sw{position:fixed;right:18px;bottom:16px;z-index:9;display:flex;gap:8px;
+    padding:8px 10px;border-radius:999px;align-items:center;
+    background:color-mix(in srgb, var(--panel) 80%, transparent);
+    border:1px solid var(--border);backdrop-filter:blur(4px)}
+  #sw button{width:18px;height:18px;border-radius:50%;cursor:pointer;
+    border:1px solid rgba(0,0,0,.35);padding:0;transition:transform .15s}
+  #sw button:hover{transform:scale(1.25)}
+  #sw button.on{outline:2px solid var(--text);outline-offset:2px}
+
+  /* ================= embed mode (?embed) =========================== */
+  body.embed{background:transparent !important;background-image:none !important;padding:0}
+  body.embed::before, body.embed::after{display:none}
+  body.embed #sw{display:none}
+</style>
+<style id="theme-css"></style>
+</head>
+<body class="offline" data-theme="terminal">
+  <div class="panel">
+    <div class="topbar">
+      <div class="brand"><span id="brand">presence</span><small id="sub"></small></div>
+      <div class="live"><span class="dot"></span><span id="liveText">OFFLINE</span></div>
+    </div>
+
+    <div class="row">
+      <div class="key" id="actKey">now</div>
+      <div class="val" id="activity">—<span class="cursor"></span></div>
+    </div>
+
+    <div class="row media paused" id="mediaRow">
+      <div class="eq" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="body">
+        <div class="key" id="playKey">now playing</div>
+        <div class="val" id="track">nothing playing</div>
+        <div class="artist" id="artist"></div>
+        <div class="src" id="src"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span id="synced">awaiting signal…</span>
+      <span class="muted" id="clock"></span>
+    </div>
+  </div>
+
+  <nav id="sw" aria-label="theme"></nav>
+
+<script type="module">
+  const STATUS_URL = "/api/status";   // Vercel: "/api/status" | self-hosted JSON
+  const POLL_MS    = 5000;
+  const STALE_SEC  = 90;              // older than this => OFFLINE
+
+  // Single source of truth: the same registry the SVG endpoint renders from.
+  // If module loading fails (offline dev, exotic hosting), fall back to a
+  // built-in terminal look so the card still works.
+  const FALLBACK = {
+    name: "terminal", label: "Terminal",
+    bg: "#05070a", panel: "#0a0f15", panel2: "#070a0e", border: "#15351f",
+    text: "#39ff9e", dim: "#1f7a52", accent: "#ffb454", accentDim: "#7a5a26",
+    ok: "#39ff9e", bad: "#ff5a5a", radius: 14,
+    strings: { brand: "PRESENCE", activityKey: "> ACTIVITY", playingKey: "> NOW PLAYING" },
+    web: { fontD: '"VT323",monospace', fontB: '"IBM Plex Mono",monospace',
+           valSize: "30px", glow: "40%" },
+  };
+  let themes, DEFAULT_THEME = "terminal";
+  try {
+    ({ themes, DEFAULT_THEME } = await import("./themes/index.js"));
+  } catch (e) {
+    console.warn("presence: theme registry unavailable, using fallback", e);
+    themes = { terminal: FALLBACK };
+  }
+
+  const BASE_STR = {
+    brand: "presence", sub: "", live: "LIVE", away: "OFFLINE",
+    activityKey: "now", playingKey: "now playing",
+    nothing: "nothing playing", awayActivity: "AWAY",
+  };
+
+  const body = document.body;
+  const $ = (id) => document.getElementById(id);
+  const qs = new URLSearchParams(location.search);
+  const DEMO = qs.has("demo");
+  if (qs.has("embed")) body.classList.add("embed");
+
+  let theme = qs.get("theme") || localStorage.getItem("presence-theme") || DEFAULT_THEME;
+  if (!themes[theme]) theme = DEFAULT_THEME;
+  const T   = () => themes[theme];
+  const str = () => ({ ...BASE_STR, ...(T().strings || {}) });
+
+  // theme tokens -> CSS variables (the web twin of lib/card.js)
+  const VAR_MAP = {
+    bg: "--bg", panel: "--panel", panel2: "--panel2", border: "--border",
+    text: "--text", dim: "--dim", accent: "--accent", accentDim: "--accent-dim",
+    ok: "--ok", bad: "--bad",
+  };
+  function applyTheme(name){
+    theme = name;
+    const t = T(), w = t.web || {};
+    body.dataset.theme = name;
+    try { localStorage.setItem("presence-theme", name); } catch(e){}
+
+    const s = document.documentElement.style;
+    for (const [k, v] of Object.entries(VAR_MAP)) s.setProperty(v, t[k]);
+    s.setProperty("--artist", t.artist || t.dim);
+    s.setProperty("--radius", (t.radius ?? 12) + "px");
+    s.setProperty("--glow", w.glow || "0%");
+    s.setProperty("--font-d", w.fontD || t.fontD || "monospace");
+    s.setProperty("--font-b", w.fontB || t.fontB || "monospace");
+    s.setProperty("--val-size", w.valSize || "26px");
+    s.setProperty("--band", (w.band || 0) + "px");
+    s.setProperty("--band-img", w.bandImg || "none");
+    s.setProperty("--band-display", w.band ? "block" : "none");
+    $("theme-css").textContent = w.css || "";
+
+    const st = str();
+    $("brand").textContent = st.brand;
+    $("sub").textContent = st.sub;
+    $("playKey").style.display = t.minimal ? "none" : "";
+    document.querySelectorAll("#sw button").forEach(b =>
+      b.classList.toggle("on", b.dataset.t === name));
+    render(window.__last || null);
+  }
+
+  // build switcher from the registry
+  for (const [name, t] of Object.entries(themes)) {
+    const b = document.createElement("button");
+    const [c1, c2] = (t.web && t.web.swatch) || [t.panel, t.accent];
+    b.dataset.t = name; b.title = t.label || name;
+    b.style.background = `linear-gradient(135deg, ${c1} 55%, ${c2} 55%)`;
+    b.addEventListener("click", () => applyTheme(name));
+    $("sw").appendChild(b);
+  }
+
+  function ago(sec){
+    if (sec < 5) return "just now";
+    if (sec < 60) return sec + "s ago";
+    const m = Math.floor(sec / 60);
+    if (m < 60) return m + "m ago";
+    return Math.floor(m / 60) + "h ago";
+  }
+
+  function render(sv){
+    const t = T(), st = str();
+    const now = Math.floor(Date.now() / 1000);
+    const age = sv && sv.ts ? now - sv.ts : 9e9;
+    const online = age < STALE_SEC;
+
+    body.classList.toggle("online", online);
+    body.classList.toggle("offline", !online);
+    $("liveText").textContent = online ? st.live : st.away;
+
+    // the verb (or generic key) is the label; the activity is the headline
+    const raw = online ? (sv && sv.activity ? sv.activity : "idle").toLowerCase() : null;
+    const verb = online && t.verbs && t.verbs[raw];
+    $("actKey").textContent = online ? (verb || st.activityKey) : st.activityKey;
+    $("activity").textContent = online
+      ? raw.toUpperCase() + (sv && sv.editor ? " — " + sv.editor.toUpperCase() : "")
+      : st.awayActivity;
+    const c = document.createElement("span"); c.className = "cursor";
+    $("activity").appendChild(c);
+
+    // media
+    const m = sv && sv.media;
+    const mediaRow = $("mediaRow");
+    $("playKey").textContent = st.playingKey;
+    if (m && m.title && online){
+      $("track").textContent = m.title;
+      $("artist").textContent = m.artist || "";
+      $("src").textContent = (m.app ? "[" + m.app.toUpperCase() + "]" : "")
+        + (m.playing ? "  ▶ PLAYING" : "  ⏸ PAUSED");
+      mediaRow.classList.toggle("paused", !m.playing);
+    } else {
+      $("track").textContent = online ? st.nothing : "—";
+      $("artist").textContent = "";
+      $("src").textContent = "";
+      mediaRow.classList.add("paused");
+    }
+
+    $("synced").textContent = sv && sv.ts ? "synced " + ago(age) : "no signal";
+  }
+
+  applyTheme(theme);
+
+  (async function loop(){
+    while (true){
+      if (DEMO){
+        window.__last = { activity: "coding", editor: "VS Code",
+          media: { title: "Fine Ghadi Biya Khouya", artist: "Nass El Ghiwane", playing: true, app: "Spotify" },
+          ts: Math.floor(Date.now() / 1000) };
+      } else {
+        try{
+          const r = await fetch(STATUS_URL + (STATUS_URL.includes("?") ? "&" : "?") + "t=" + Date.now(), {cache:"no-store"});
+          if (r.ok) window.__last = await r.json();
+        }catch(e){}
+      }
+      render(window.__last || null);
+      await new Promise(res => setTimeout(res, POLL_MS));
+    }
+  })();
+
+  setInterval(() => {
+    $("clock").textContent = new Date().toTimeString().slice(0, 8);
+  }, 1000);
+</script>
+</body>
+</html>

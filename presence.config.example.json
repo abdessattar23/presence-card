@@ -1,0 +1,7 @@
+{
+  "upstash_url": "https://YOUR-DB.upstash.io",
+  "upstash_token": "YOUR_UPSTASH_REST_TOKEN",
+  "gist_id": "",
+  "gist_token": "",
+  "gist_filename": "status.json"
+}

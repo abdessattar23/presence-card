@@ -1,0 +1,12 @@
+{
+  "name": "presence",
+  "version": "1.0.0",
+  "description": "Self-hosted live presence card — what you're coding and listening to, right now, themed. Embeds in portfolios and GitHub profile READMEs.",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "test": "node scripts/validate.js",
+    "preview": "node scripts/preview.js"
+  },
+  "keywords": ["presence", "now-playing", "github-readme", "status-card", "zellij", "vercel"]
+}
