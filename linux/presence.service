@@ -1,0 +1,13 @@
+# systemd user unit — __PYTHON__ and __AGENT__ are filled in by linux/install.sh
+[Unit]
+Description=Presence live-status agent
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=__PYTHON__ __AGENT__
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
