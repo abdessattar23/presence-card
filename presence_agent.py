@@ -21,6 +21,7 @@ Setup:
 import asyncio
 import json
 import os
+import sys
 import threading
 import time
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -154,10 +155,29 @@ def push_gist(value: str):
         print("\n[gist] push failed:", e)
 
 
+def push_cloud(value: str):
+    c = presence_config.get()
+    key, base = c.get("api_key"), c.get("api_base")
+    if not key:
+        return
+    try:
+        requests.post(
+            f"{base.rstrip('/')}/api/ingest",
+            headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+            data=value.encode("utf-8"),
+            timeout=8,
+        )
+    except Exception as e:
+        print("\n[cloud] push failed:", e)
+
+
 def publish(payload: dict):
     value = json.dumps(payload, ensure_ascii=False)
-    push_upstash(value)
-    push_gist(value)
+    if presence_config.creds_mode() == "cloud":
+        push_cloud(value)
+    else:
+        push_upstash(value)
+        push_gist(value)
 
 
 # ---- local test endpoint --------------------------------------------------
@@ -233,6 +253,8 @@ async def main():
 
 
 if __name__ == "__main__":
+    if presence_config.setup_from_cli(sys.argv):
+        sys.exit(0)
     try:
         asyncio.run(main())
     except KeyboardInterrupt:

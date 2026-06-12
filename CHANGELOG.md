@@ -7,6 +7,13 @@ to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
 ### Added
+- **Hosted cloud service (beta)**: sign in with GitHub, claim a handle, get an
+  API key, and publish to `/api/ingest` — your card lives at `/u/{handle}`.
+  GitHub OAuth, per-user isolation, server-side payload sanitization, and
+  rate limiting; self-hosted bring-your-own-Upstash stays fully supported.
+- **Agent cloud mode**: `presence_config` gains `api_key`/`api_base` +
+  `creds_mode()`; agents publish to the cloud when an API key is set, else to
+  Upstash. `python presence_agent.py --setup --api-key …` writes the config.
 - **macOS & Linux release bundles**: CI now packages each platform's agent +
   config + service installer into a tarball and attaches it to the release,
   alongside the Windows `presence.exe`.

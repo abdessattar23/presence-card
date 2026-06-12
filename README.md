@@ -72,6 +72,20 @@ https://presence-neon.vercel.app/api/card?theme=riad&demo
 
 ## 🚀 Quick start
 
+### Hosted (easiest)
+
+Sign in at **[presence-neon.vercel.app/onboard.html](https://presence-neon.vercel.app/onboard.html)**
+with GitHub, pick a handle, copy your API key, then point the agent at it:
+
+```bash
+python presence_agent.py --setup --api-key <YOUR_KEY>
+python presence_agent.py
+```
+
+Your card is live at `presence-neon.vercel.app/u/<handle>`. No database to run.
+
+### Self-hosted (bring your own Upstash)
+
 **1 · Storage (free):** create a database at [upstash.com](https://upstash.com),
 grab the REST URL + token.
 

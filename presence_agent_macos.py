@@ -23,6 +23,7 @@ import json
 import os
 import shutil
 import subprocess
+import sys
 import time
 import urllib.request
 from pathlib import Path
@@ -120,6 +121,30 @@ def push_upstash(value: str):
         print("\n[upstash] push failed:", e)
 
 
+def push_cloud(value: str):
+    c = presence_config.get()
+    key, base = c.get("api_key"), c.get("api_base")
+    if not key:
+        return
+    try:
+        req = urllib.request.Request(
+            f"{base.rstrip('/')}/api/ingest",
+            data=value.encode("utf-8"),
+            headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+            method="POST",
+        )
+        urllib.request.urlopen(req, timeout=8).read()
+    except Exception as e:
+        print("\n[cloud] push failed:", e)
+
+
+def publish(value: str):
+    if presence_config.creds_mode() == "cloud":
+        push_cloud(value)
+    else:
+        push_upstash(value)
+
+
 def fingerprint(p):
     return json.dumps({k: p[k] for k in ("activity", "editor", "media")}, ensure_ascii=False)
 
@@ -139,7 +164,7 @@ def main():
 
         fp, now = fingerprint(payload), time.time()
         if fp != last_fp or (now - last_push) >= HEARTBEAT_SEC:
-            push_upstash(json.dumps(payload, ensure_ascii=False))
+            publish(json.dumps(payload, ensure_ascii=False))
             last_fp, last_push, flag = fp, now, "PUSH"
         else:
             flag = "    "
@@ -155,6 +180,8 @@ def main():
 
 
 if __name__ == "__main__":
+    if presence_config.setup_from_cli(sys.argv):
+        sys.exit(0)
     try:
         main()
     except KeyboardInterrupt:

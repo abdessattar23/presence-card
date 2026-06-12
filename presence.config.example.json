@@ -1,6 +1,11 @@
 {
-  "upstash_url": "https://YOUR-DB.upstash.io",
-  "upstash_token": "YOUR_UPSTASH_REST_TOKEN",
+  "_comment": "Hosted users: set only api_key (from the dashboard). Self-host users: set the upstash_* pair instead. api_key wins if both are present.",
+  "api_key": "",
+  "api_base": "https://presence-neon.vercel.app",
+
+  "upstash_url": "",
+  "upstash_token": "",
+
   "gist_id": "",
   "gist_token": "",
   "gist_filename": "status.json"
