@@ -1,0 +1,38 @@
+name: release bundles
+
+# On a version tag, package the macOS and Linux agents (script + config +
+# service installer) into tarballs and attach them to the release, alongside
+# the Windows presence.exe built by build-windows.yml.
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  bundles:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build macOS + Linux tarballs
+        run: |
+          ver="${GITHUB_REF_NAME}"
+          for os in macos linux; do
+            stage="presence-$os"
+            mkdir -p "$stage"
+            cp presence_config.py presence.config.example.json LICENSE "$stage/"
+            cp "presence_agent_$os.py" "$stage/"
+            cp -r "$os" "$stage/$os"
+            tar czf "presence-$os-$ver.tar.gz" "$stage"
+          done
+          ls -1 presence-*.tar.gz
+
+      - name: Attach to the release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            presence-macos-*.tar.gz
+            presence-linux-*.tar.gz

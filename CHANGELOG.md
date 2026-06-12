@@ -6,6 +6,11 @@ to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+- **macOS & Linux release bundles**: CI now packages each platform's agent +
+  config + service installer into a tarball and attaches it to the release,
+  alongside the Windows `presence.exe`.
+
 ## [0.1.2] — 2026-06-12
 
 ### Added
