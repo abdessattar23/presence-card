@@ -1,0 +1,8 @@
+# Shared desktop-app deps (all OSes). Per-OS extras:
+#   Windows: also winsdk, pywin32  (see requirements-windows.txt)
+#   macOS:   pyobjc is pulled in by pywebview
+#   Linux:   PyGObject + gir1.2-webkit2-4.1 (system packages)
+requests
+pystray
+pillow
+pywebview

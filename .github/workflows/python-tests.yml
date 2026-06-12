@@ -19,3 +19,5 @@ jobs:
         run: python scripts/test_rules.py
       - name: Engine tests
         run: python scripts/test_core.py
+      - name: App bridge tests
+        run: python scripts/test_app_bridge.py

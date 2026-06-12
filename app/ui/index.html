@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Presence</title>
+<link rel="stylesheet" href="app.css" />
+</head>
+<body data-theme="zellij">
+  <aside class="nav">
+    <div class="brand">حضور<small>presence</small></div>
+    <button class="tab on" data-view="preview">Preview</button>
+    <button class="tab" data-view="override">Override</button>
+    <button class="tab" data-view="rules">Rules</button>
+    <button class="tab" data-view="privacy">Privacy</button>
+    <button class="tab" data-view="appearance">Appearance</button>
+    <button class="tab" data-view="account">Account</button>
+    <div class="spacer"></div>
+    <div class="statusline" id="statusline">starting…</div>
+    <div class="row">
+      <button id="pauseBtn" class="ghost">Pause</button>
+      <button id="cardBtn" class="ghost">Open card ↗</button>
+    </div>
+  </aside>
+
+  <main>
+    <!-- PREVIEW -->
+    <section data-view="preview" class="view on">
+      <h2>Live preview</h2>
+      <p class="muted">Exactly what visitors see — after your rules, privacy, and overrides are applied.</p>
+      <div id="cardHost" class="cardHost"></div>
+      <div class="kv"><span>Card URL</span><code id="cardUrl">—</code></div>
+    </section>
+
+    <!-- OVERRIDE -->
+    <section data-view="override" class="view">
+      <h2>Override status <span class="badge" id="ovBadge" hidden>active</span></h2>
+      <p class="muted">Show a custom status regardless of what you're actually doing.</p>
+      <label>Activity</label><input id="ovActivity" placeholder="in a meeting" />
+      <label>App / editor label (optional)</label><input id="ovEditor" placeholder="" />
+      <fieldset><legend>Fake now-playing (optional)</legend>
+        <input id="ovTitle" placeholder="track title" />
+        <input id="ovArtist" placeholder="artist" />
+      </fieldset>
+      <label>Auto-clear after</label>
+      <select id="ovMinutes"><option value="0">never</option><option value="30">30 min</option><option value="60">1 hour</option><option value="240">4 hours</option></select>
+      <div class="row"><button class="primary" id="ovSave">Apply override</button><button class="ghost" id="ovClear">Clear</button></div>
+    </section>
+
+    <!-- RULES -->
+    <section data-view="rules" class="view">
+      <h2>Rules</h2>
+      <p class="muted">When the focused app matches, transform what's published. First match wins.</p>
+      <div id="ruleList"></div>
+      <button class="ghost" id="addRule">+ Add rule</button>
+      <div class="row"><button class="primary" id="rulesSave">Save rules</button></div>
+    </section>
+
+    <!-- PRIVACY -->
+    <section data-view="privacy" class="view">
+      <h2>Privacy</h2>
+      <label class="check"><input type="checkbox" id="pInvisible"> <b>Invisible</b> — publish nothing but a placeholder (panic button)</label>
+      <label class="check"><input type="checkbox" id="pHideEditor"> Hide the app/editor name</label>
+      <label class="check"><input type="checkbox" id="pHideMedia"> Hide now-playing</label>
+      <label>Placeholder when hidden</label><input id="pPlaceholder" placeholder="away" />
+      <label>Pause publishing while these apps are focused (comma-separated)</label>
+      <input id="pPause" placeholder="1password.exe, keepassxc" />
+      <div class="row"><button class="primary" id="privSave">Save privacy</button></div>
+    </section>
+
+    <!-- APPEARANCE -->
+    <section data-view="appearance" class="view">
+      <h2>Theme</h2>
+      <p class="muted">The theme your public card uses.</p>
+      <div id="themeGrid" class="themeGrid"></div>
+    </section>
+
+    <!-- ACCOUNT -->
+    <section data-view="account" class="view">
+      <h2>Account</h2>
+      <p class="muted">Hosted: paste your API key from the dashboard. Self-host: use your Upstash creds.</p>
+      <div class="kv"><span>Mode</span><code id="acMode">—</code></div>
+      <label>API key (hosted)</label><input id="acKey" type="password" placeholder="pc_live_…" />
+      <label>API base</label><input id="acBase" placeholder="https://presence-neon.vercel.app" />
+      <div class="row"><button class="primary" id="acSave">Save</button>
+        <button class="ghost" id="acDash">Open dashboard ↗</button></div>
+      <details><summary>Self-host (Upstash)</summary>
+        <label>Upstash REST URL</label><input id="acUrl" placeholder="https://…upstash.io" />
+        <label>Upstash REST token</label><input id="acTok" type="password" />
+        <button class="ghost" id="acUpstash">Save Upstash</button>
+      </details>
+    </section>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-# Windows agent + background tray app.
+# Windows agent + tray + desktop app.
 #   pip install -r requirements-windows.txt
 # (PyInstaller is only needed to BUILD the exe — see windows/README.md.)
 winsdk
@@ -7,3 +7,4 @@ psutil
 requests
 pystray
 pillow
+pywebview
