@@ -1,0 +1,7 @@
+{
+  "rewrites": [
+    { "source": "/u/:handle", "destination": "/api/card?user=:handle" },
+    { "source": "/u/:handle/json", "destination": "/api/status?user=:handle" },
+    { "source": "/dashboard", "destination": "/dashboard.html" }
+  ]
+}
