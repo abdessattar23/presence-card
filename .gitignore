@@ -10,3 +10,4 @@ windows/dist/
 windows/*.spec
 windows/icon.ico
 *.exe
+app/ui/_harness.html
