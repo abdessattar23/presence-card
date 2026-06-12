@@ -74,7 +74,7 @@ https://presence-neon.vercel.app/api/card?theme=riad&demo
 
 ### Hosted (easiest)
 
-Sign in at **[presence-neon.vercel.app/onboard.html](https://presence-neon.vercel.app/onboard.html)**
+Sign in at **[presence-neon.vercel.app/onboard](https://presence-neon.vercel.app/onboard)**
 with GitHub, pick a handle, copy your API key, then point the agent at it:
 
 ```bash
@@ -191,6 +191,29 @@ walkthrough in [CONTRIBUTING.md](CONTRIBUTING.md).
 **PRs for new themes are very welcome** — bring your culture, your console,
 your colorscheme. zellij started as one person wanting their card to look
 like home. 🇲🇦
+
+## 🗂️ Project layout — core vs cloud
+
+Two layers in one repo:
+
+```
+CORE (the open toolkit — fork it, theme it, self-host it)
+  lib/card.js, lib/motifs.js   the SVG renderer + zellij motifs
+  themes/                      the 15 themes + contribution system
+  presence_agent*.py           the desktop agents (Win/macOS/Linux)
+  api/card.js, api/status.js   public read API (serves self-host AND cloud)
+  index.html                   the web card
+
+CLOUD (what runs the hosted instance at presence-neon.vercel.app)
+  api/cloud/*                  GitHub OAuth, /api/cloud/ingest, keys, handle, me
+  lib/cloud/*                  auth, keys, store, sanitize (service domain logic)
+  cloud/*.html                 the sign-in + dashboard UI
+```
+
+Self-hosting needs only the **core** — set your Upstash creds and ignore the
+cloud layer entirely. Contributing a **theme**? You only ever touch `themes/`.
+The cloud layer is here in the open (auditable — fitting for a privacy tool),
+just cleanly separated.
 
 ## 🔒 Privacy
 

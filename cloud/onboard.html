@@ -37,7 +37,7 @@
     <div id="signin" class="hidden">
       <p>Sign in with GitHub to get your live presence card and an API key.
          No password — we only read your public profile.</p>
-      <a class="btn gh" href="/api/login">Sign in with GitHub →</a>
+      <a class="btn gh" href="/api/cloud/login">Sign in with GitHub →</a>
     </div>
 
     <div id="claim" class="hidden">
@@ -53,7 +53,7 @@
 
 <script type="module">
   const $ = (id) => document.getElementById(id);
-  const me = await fetch("/api/me").then(r => r.ok ? r.json() : null).catch(() => null);
+  const me = await fetch("/api/cloud/me").then(r => r.ok ? r.json() : null).catch(() => null);
 
   if (!me) {
     $("signin").classList.remove("hidden");
@@ -65,7 +65,7 @@
     h.addEventListener("input", () => prev.textContent = h.value || "handle");
     $("go").addEventListener("click", async () => {
       $("err").textContent = "";
-      const r = await fetch("/api/handle", {
+      const r = await fetch("/api/cloud/handle", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ handle: h.value.toLowerCase() }),
       });

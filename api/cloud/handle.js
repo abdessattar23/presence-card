@@ -1,6 +1,6 @@
 // api/handle.js — POST /api/handle {handle} → claim or rename your handle.
-import { requireUser, setSession } from "../lib/auth.js";
-import { claimHandle, validHandle, getUser } from "../lib/store.js";
+import { requireUser, setSession } from "../../lib/cloud/auth.js";
+import { claimHandle, validHandle, getUser } from "../../lib/cloud/store.js";
 
 export default async function handler(req, res) {
   res.setHeader("Content-Type", "application/json");

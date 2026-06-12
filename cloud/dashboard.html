@@ -48,7 +48,7 @@
   const $ = (s, r=document) => r.querySelector(s);
   const esc = (s) => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
-  const me = await fetch("/api/me").then(r => r.ok ? r.json() : null).catch(() => null);
+  const me = await fetch("/api/cloud/me").then(r => r.ok ? r.json() : null).catch(() => null);
   if (!me) { location.href = "/onboard.html"; throw new Error("not signed in"); }
   if (!me.handle) { location.href = "/onboard.html"; }
 
@@ -65,7 +65,7 @@
       <header>
         <img src="${esc(me.avatar||"")}" alt="">
         <div class="who"><h1>@${esc(me.handle)}</h1><div class="sub">${esc(me.login)} · ${esc(me.tier)} plan</div></div>
-        <a class="logout" href="/api/logout">sign out</a>
+        <a class="logout" href="/api/cloud/logout">sign out</a>
       </header>
 
       <section>
@@ -113,7 +113,7 @@
   }
 
   async function loadKeys() {
-    const { keys=[] } = await fetch("/api/keys").then(r => r.json());
+    const { keys=[] } = await fetch("/api/cloud/keys").then(r => r.json());
     $("#keylist").innerHTML = keys.length
       ? keys.map(k => `<li><span class="grow">${esc(k.name)} <span class="muted">· ${k.key_id}</span></span>
           <button class="danger" data-id="${k.key_id}">revoke</button></li>`).join("")
@@ -123,7 +123,7 @@
   }
   async function createKey() {
     const name = $("#keyname").value || "default";
-    const r = await fetch("/api/keys", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ name }) });
+    const r = await fetch("/api/cloud/keys", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ name }) });
     const data = await r.json();
     if (r.ok) {
       $("#reveal").innerHTML = `New key (copy now — shown once):<br><code style="padding:6px;display:inline-block;margin-top:4px">${esc(data.raw)}</code>`;
@@ -131,7 +131,7 @@
     } else $("#reveal").textContent = data.error || "error";
   }
   async function revokeKey(id) {
-    await fetch("/api/keys?key_id=" + encodeURIComponent(id), { method:"DELETE" });
+    await fetch("/api/cloud/keys?key_id=" + encodeURIComponent(id), { method:"DELETE" });
     loadKeys();
   }
 

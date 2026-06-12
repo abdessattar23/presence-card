@@ -7,7 +7,7 @@
 // The API key is never involved in reads. Self-host env vars (unchanged):
 //   UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN
 import { get } from "../lib/upstash.js";
-import { getPresenceByHandle } from "../lib/store.js";
+import { getPresenceByHandle } from "../lib/cloud/store.js";
 import { limit, clientId } from "../lib/ratelimit.js";
 
 const OFFLINE = { activity: "idle", editor: null, media: null, ts: 0 };

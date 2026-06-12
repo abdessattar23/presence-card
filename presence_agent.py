@@ -162,7 +162,7 @@ def push_cloud(value: str):
         return
     try:
         requests.post(
-            f"{base.rstrip('/')}/api/ingest",
+            f"{base.rstrip('/')}/api/cloud/ingest",
             headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
             data=value.encode("utf-8"),
             timeout=8,

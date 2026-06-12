@@ -6,10 +6,10 @@
 // Resolves the key → user, rate-limits, sanitizes (server never trusts the
 // client), and writes presence:{gh_id} with a TTL. The key never appears in
 // any public read path.
-import { bearer, hashKey } from "../lib/keys.js";
-import { resolveApiKey, writePresence } from "../lib/store.js";
-import { sanitizePresence } from "../lib/sanitize.js";
-import { limit } from "../lib/ratelimit.js";
+import { bearer, hashKey } from "../../lib/cloud/keys.js";
+import { resolveApiKey, writePresence } from "../../lib/cloud/store.js";
+import { sanitizePresence } from "../../lib/cloud/sanitize.js";
+import { limit } from "../../lib/ratelimit.js";
 
 export default async function handler(req, res) {
   res.setHeader("Content-Type", "application/json");

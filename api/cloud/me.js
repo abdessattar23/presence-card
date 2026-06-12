@@ -1,6 +1,6 @@
 // api/me.js — GET /api/me → the signed-in user's profile + key metadata.
-import { requireUser } from "../lib/auth.js";
-import { getUser } from "../lib/store.js";
+import { requireUser } from "../../lib/cloud/auth.js";
+import { getUser } from "../../lib/cloud/store.js";
 
 export default async function handler(req, res) {
   res.setHeader("Content-Type", "application/json");

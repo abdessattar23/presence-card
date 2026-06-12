@@ -14,7 +14,7 @@
 import { getTheme, DEFAULT_THEME, themes } from "../themes/index.js";
 import { renderCard, DEMO_STATUS } from "../lib/card.js";
 import { get } from "../lib/upstash.js";
-import { getPresenceByHandle } from "../lib/store.js";
+import { getPresenceByHandle } from "../lib/cloud/store.js";
 import { limit, clientId } from "../lib/ratelimit.js";
 
 export default async function handler(req, res) {

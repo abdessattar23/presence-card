@@ -1,6 +1,6 @@
-// api/callback.js — GET /api/callback?code=&state= → finish GitHub OAuth.
-import { checkState, setSession } from "../lib/auth.js";
-import { upsertUser } from "../lib/store.js";
+// api/callback.js — GET /api/cloud/callback?code=&state= → finish GitHub OAuth.
+import { checkState, setSession } from "../../lib/cloud/auth.js";
+import { upsertUser } from "../../lib/cloud/store.js";
 
 export default async function handler(req, res) {
   const { code, state } = req.query;
@@ -17,7 +17,7 @@ export default async function handler(req, res) {
         client_id: process.env.GITHUB_CLIENT_ID,
         client_secret: process.env.GITHUB_CLIENT_SECRET,
         code,
-        redirect_uri: `${process.env.APP_BASE_URL}/api/callback`,
+        redirect_uri: `${process.env.APP_BASE_URL}/api/cloud/callback`,
       }),
     });
     const tok = await tokRes.json();
@@ -37,7 +37,7 @@ export default async function handler(req, res) {
     const user = await upsertUser(gh);
     setSession(res, { gh_id: user.gh_id, handle: user.handle });
     res.statusCode = 302;
-    res.setHeader("Location", user.handle ? "/dashboard" : "/onboard.html");
+    res.setHeader("Location", user.handle ? "/dashboard" : "/onboard");
     res.end();
   } catch (e) {
     res.statusCode = 500;

@@ -161,7 +161,7 @@ def push_cloud(value: str):
         return
     try:
         req = urllib.request.Request(
-            f"{base.rstrip('/')}/api/ingest",
+            f"{base.rstrip('/')}/api/cloud/ingest",
             data=value.encode("utf-8"),
             headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
             method="POST",

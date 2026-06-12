@@ -2,11 +2,11 @@
 //   GET    /api/keys            → list (metadata only)
 //   POST   /api/keys {name}     → mint a key, returns the raw value ONCE
 //   DELETE /api/keys?key_id=…   → revoke
-import { requireUser } from "../lib/auth.js";
-import { getUser, saveUser, apikeyKey } from "../lib/store.js";
-import { mintKey } from "../lib/keys.js";
-import { set, del } from "../lib/upstash.js";
-import { limit } from "../lib/ratelimit.js";
+import { requireUser } from "../../lib/cloud/auth.js";
+import { getUser, saveUser, apikeyKey } from "../../lib/cloud/store.js";
+import { mintKey } from "../../lib/cloud/keys.js";
+import { set, del } from "../../lib/upstash.js";
+import { limit } from "../../lib/ratelimit.js";
 
 const MAX_ACTIVE = 5;
 
