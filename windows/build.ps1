@@ -7,17 +7,25 @@ $root = Split-Path $PSScriptRoot -Parent
 Push-Location $root
 try {
   python -m pip install -r requirements-windows.txt pyinstaller
+  if ($LASTEXITCODE -ne 0) { throw "pip install failed ($LASTEXITCODE)" }
 
   # generate the app icon (green phosphor dot) so the exe isn't the default blank
   python -c "from PIL import Image, ImageDraw; im=Image.new('RGBA',(256,256),(0,0,0,0)); ImageDraw.Draw(im).ellipse((38,38,218,218), fill=(57,255,158,255)); im.save('windows/icon.ico', sizes=[(16,16),(24,24),(32,32),(48,48),(64,64),(128,128),(256,256)])"
+  if ($LASTEXITCODE -ne 0) { throw "icon generation failed ($LASTEXITCODE)" }
 
+  # --icon and --version-file are resolved relative to --specpath, so pass them
+  # as absolute paths to avoid a windows\windows\... mislookup.
+  $icon = Join-Path $root "windows\icon.ico"
+  $ver  = Join-Path $root "windows\version_info.txt"
   python -m PyInstaller --noconfirm `
     --noconsole --onefile --name presence `
     --collect-all winsdk `
-    --icon windows\icon.ico `
-    --version-file windows\version_info.txt `
+    --icon "$icon" `
+    --version-file "$ver" `
     --distpath windows\dist --workpath windows\build --specpath windows `
     presence_tray.py
+  if ($LASTEXITCODE -ne 0) { throw "PyInstaller failed ($LASTEXITCODE)" }
+  if (-not (Test-Path windows\dist\presence.exe)) { throw "presence.exe was not produced" }
 
   Write-Host "`nBuilt: $root\windows\dist\presence.exe"
 } finally {
