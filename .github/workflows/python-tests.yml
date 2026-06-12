@@ -13,7 +13,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Compile agents + config
-        run: python -m py_compile presence_config.py presence_rules.py presence_agent_macos.py presence_agent_linux.py
+      - name: Compile agents + core + config
+        run: python -m py_compile presence_config.py presence_rules.py presence_core.py presence_agent_macos.py presence_agent_linux.py
       - name: Rules engine tests
         run: python scripts/test_rules.py
+      - name: Engine tests
+        run: python scripts/test_core.py
