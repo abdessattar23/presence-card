@@ -3,8 +3,8 @@
 # Bump the version numbers when cutting a new release tag.
 VSVersionInfo(
   ffi=FixedFileInfo(
-    filevers=(0, 1, 1, 0),
-    prodvers=(0, 1, 1, 0),
+    filevers=(0, 1, 2, 0),
+    prodvers=(0, 1, 2, 0),
     mask=0x3f,
     flags=0x0,
     OS=0x40004,
@@ -17,12 +17,12 @@ VSVersionInfo(
       StringTable('040904B0', [
         StringStruct('CompanyName', 'Mohammed Abdessetar Elyagoubi'),
         StringStruct('FileDescription', 'Presence - live status agent'),
-        StringStruct('FileVersion', '0.1.1.0'),
+        StringStruct('FileVersion', '0.1.2.0'),
         StringStruct('InternalName', 'presence'),
         StringStruct('LegalCopyright', '(c) 2026 Mohammed Abdessetar Elyagoubi. MIT License.'),
         StringStruct('OriginalFilename', 'presence.exe'),
         StringStruct('ProductName', 'Presence'),
-        StringStruct('ProductVersion', '0.1.1.0')
+        StringStruct('ProductVersion', '0.1.2.0')
       ])
     ]),
     VarFileInfo([VarStruct('Translation', [1033, 1200])])

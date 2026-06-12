@@ -6,6 +6,8 @@ to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.2] — 2026-06-12
+
 ### Added
 - **Background services for macOS and Linux** — a launchd agent
   (`macos/install.sh`) and a `systemd --user` unit (`linux/install.sh`) so the
@@ -46,6 +48,7 @@ First public release.
 - **CI** validating every theme on each PR, plus issue templates and a PR
   checklist.
 
-[Unreleased]: https://github.com/abdessattar23/presence-card/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/abdessattar23/presence-card/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/abdessattar23/presence-card/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/abdessattar23/presence-card/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/abdessattar23/presence-card/releases/tag/v0.1.0
