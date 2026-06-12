@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>presence — get started</title>
+<link rel="icon" href="/favicon.ico" />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Reem+Kufi:wght@600&display=swap" rel="stylesheet" />
+<style>
+  :root{ --bg:#081733; --panel:#0e2348; --border:#8a6128; --text:#f3e9d2; --dim:#3fae97; --accent:#e8b13c; --bad:#e06550; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;
+    background:radial-gradient(120% 90% at 50% 0%, #102a56 0%, var(--bg) 60%), var(--bg);
+    color:var(--text);font-family:"IBM Plex Mono",monospace}
+  .card{width:min(440px,100%);background:linear-gradient(180deg,var(--panel),#0a1b3a);
+    border:1px solid var(--border);border-radius:8px;padding:30px;
+    box-shadow:0 0 0 4px #0a1b3a,0 0 0 5px var(--border),0 30px 80px -30px #000}
+  h1{font-family:"Reem Kufi",sans-serif;font-size:30px;margin-bottom:4px}
+  .sub{color:var(--dim);font-size:12px;letter-spacing:2px;margin-bottom:24px}
+  p{font-size:13px;line-height:1.6;color:var(--text);margin-bottom:18px}
+  a.btn,button{font-family:inherit;cursor:pointer;border:none;border-radius:6px;
+    padding:11px 16px;font-size:14px;font-weight:600;text-decoration:none;display:inline-block}
+  .gh{background:#e8b13c;color:#081733}
+  input{width:100%;font-family:inherit;font-size:15px;padding:10px 12px;border-radius:6px;
+    border:1px solid var(--border);background:#0a1b3a;color:var(--text);margin:8px 0}
+  .hint{font-size:11px;color:var(--dim)}
+  .err{color:var(--bad);font-size:12px;min-height:16px;margin-top:6px}
+  .url{color:var(--accent)}
+  .hidden{display:none}
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>حضور · presence</h1>
+    <div class="sub">GET STARTED</div>
+
+    <div id="signin" class="hidden">
+      <p>Sign in with GitHub to get your live presence card and an API key.
+         No password — we only read your public profile.</p>
+      <a class="btn gh" href="/api/login">Sign in with GitHub →</a>
+    </div>
+
+    <div id="claim" class="hidden">
+      <p>Pick your public handle. Your card will live at
+         <span class="url">/u/<span id="preview">handle</span></span>.</p>
+      <input id="handle" placeholder="your-handle" autocomplete="off"
+             pattern="[a-z0-9][a-z0-9-]{1,38}" />
+      <div class="hint">lowercase letters, numbers, hyphens · 2–39 chars</div>
+      <div class="err" id="err"></div>
+      <button class="gh" id="go">Claim handle →</button>
+    </div>
+  </div>
+
+<script type="module">
+  const $ = (id) => document.getElementById(id);
+  const me = await fetch("/api/me").then(r => r.ok ? r.json() : null).catch(() => null);
+
+  if (!me) {
+    $("signin").classList.remove("hidden");
+  } else if (me.handle) {
+    location.href = "/dashboard";
+  } else {
+    $("claim").classList.remove("hidden");
+    const h = $("handle"), prev = $("preview");
+    h.addEventListener("input", () => prev.textContent = h.value || "handle");
+    $("go").addEventListener("click", async () => {
+      $("err").textContent = "";
+      const r = await fetch("/api/handle", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ handle: h.value.toLowerCase() }),
+      });
+      const data = await r.json();
+      if (r.ok) location.href = "/dashboard";
+      else $("err").textContent = data.error || "could not claim handle";
+    });
+  }
+</script>
+</body>
+</html>

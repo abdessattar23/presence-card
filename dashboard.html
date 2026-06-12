@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>presence — dashboard</title>
+<link rel="icon" href="/favicon.ico" />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Reem+Kufi:wght@600&display=swap" rel="stylesheet" />
+<style>
+  :root{ --bg:#081733; --panel:#0e2348; --panel2:#0a1b3a; --border:#8a6128; --text:#f3e9d2;
+    --dim:#3fae97; --accent:#e8b13c; --bad:#e06550; --ok:#19b58f; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;padding:32px 20px;color:var(--text);font-family:"IBM Plex Mono",monospace;
+    background:radial-gradient(120% 70% at 50% 0%, #102a56 0%, var(--bg) 55%), var(--bg)}
+  .wrap{max-width:760px;margin:0 auto}
+  header{display:flex;align-items:center;gap:14px;margin-bottom:28px}
+  header img{width:46px;height:46px;border-radius:50%;border:2px solid var(--border)}
+  header .who{flex:1}
+  h1{font-family:"Reem Kufi",sans-serif;font-size:26px;line-height:1}
+  .sub{color:var(--dim);font-size:12px;letter-spacing:2px}
+  a.logout{color:var(--dim);font-size:12px;text-decoration:none}
+  section{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--border);
+    border-radius:8px;padding:20px;margin-bottom:20px}
+  h2{font-size:13px;letter-spacing:2px;color:var(--accent);margin-bottom:14px;text-transform:uppercase}
+  .preview{display:block;width:100%;max-width:560px;margin:0 auto 14px;border-radius:8px}
+  label{font-size:11px;color:var(--dim);display:block;margin:10px 0 4px}
+  code,pre{font-family:inherit;background:#06122b;border:1px solid var(--border);border-radius:6px;
+    color:var(--text);font-size:12px}
+  pre{padding:10px 12px;overflow:auto;white-space:pre-wrap;word-break:break-all}
+  .row{display:flex;gap:8px;align-items:center}
+  button,select{font-family:inherit;cursor:pointer;border:1px solid var(--border);border-radius:6px;
+    background:#06122b;color:var(--text);padding:8px 12px;font-size:13px}
+  button.primary{background:var(--accent);color:#081733;border-color:var(--accent);font-weight:600}
+  button.danger{color:var(--bad);border-color:var(--bad);background:transparent}
+  .keys{list-style:none}
+  .keys li{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px dashed var(--border);font-size:13px}
+  .keys li:first-child{border-top:none}
+  .grow{flex:1}
+  .reveal{color:var(--ok);font-size:12px;margin-top:8px;word-break:break-all}
+  .muted{color:var(--dim);font-size:11px}
+</style>
+</head>
+<body>
+  <div class="wrap" id="app">loading…</div>
+
+<script type="module">
+  import { themes } from "/themes/index.js";
+  const $ = (s, r=document) => r.querySelector(s);
+  const esc = (s) => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+  const me = await fetch("/api/me").then(r => r.ok ? r.json() : null).catch(() => null);
+  if (!me) { location.href = "/onboard.html"; throw new Error("not signed in"); }
+  if (!me.handle) { location.href = "/onboard.html"; }
+
+  const origin = location.origin;
+  const themeNames = Object.keys(themes);
+  let theme = localStorage.getItem("presence-dash-theme") || "zellij";
+  if (!themes[theme]) theme = themeNames[0];
+
+  const cardUrl = (t) => `${origin}/u/${me.handle}` + (t && t !== "terminal" ? `?theme=${t}` : "");
+  const apiCardUrl = (t) => `${origin}/api/card?user=${me.handle}&theme=${t}`;
+
+  function render() {
+    $("#app").innerHTML = `
+      <header>
+        <img src="${esc(me.avatar||"")}" alt="">
+        <div class="who"><h1>@${esc(me.handle)}</h1><div class="sub">${esc(me.login)} · ${esc(me.tier)} plan</div></div>
+        <a class="logout" href="/api/logout">sign out</a>
+      </header>
+
+      <section>
+        <h2>Your card</h2>
+        <img class="preview" id="prev" src="${esc(apiCardUrl(theme))}&_=${Date.now()}" alt="your presence card">
+        <div class="row">
+          <label style="margin:0">Theme</label>
+          <select id="theme">${themeNames.map(n => `<option ${n===theme?"selected":""}>${n}</option>`).join("")}</select>
+        </div>
+        <label>Public URL</label><pre id="purl">${esc(cardUrl(theme))}</pre>
+        <label>GitHub README (markdown)</label>
+        <pre id="md">[![presence](${esc(apiCardUrl(theme))})](${esc(cardUrl(theme))})</pre>
+        <label>Embed (iframe)</label>
+        <pre id="ifr">&lt;iframe src="${esc(origin)}/?theme=${esc(theme)}&amp;embed" width="600" height="320" frameborder="0"&gt;&lt;/iframe&gt;</pre>
+      </section>
+
+      <section>
+        <h2>Connect your agent</h2>
+        <p class="muted">Run this once, then start the app. Your API key authenticates the agent — keep it secret.</p>
+        <label>Setup command</label>
+        <pre>python presence_agent.py --setup --api-key &lt;YOUR_KEY&gt; --api-base ${esc(origin)}</pre>
+        <p class="muted">Or download the desktop app and paste the key in Settings → Account.
+           Builds: <a style="color:var(--accent)" href="https://github.com/abdessattar23/presence-card/releases">Releases</a>.</p>
+      </section>
+
+      <section>
+        <h2>API keys</h2>
+        <ul class="keys" id="keylist"></ul>
+        <div class="reveal" id="reveal"></div>
+        <div class="row" style="margin-top:12px">
+          <input id="keyname" placeholder="key name (e.g. laptop)" style="flex:1;font-family:inherit;padding:8px 12px;border-radius:6px;border:1px solid var(--border);background:#06122b;color:var(--text)">
+          <button class="primary" id="newkey">+ New key</button>
+        </div>
+      </section>`;
+
+    $("#theme").addEventListener("change", e => {
+      theme = e.target.value; localStorage.setItem("presence-dash-theme", theme);
+      $("#prev").src = apiCardUrl(theme) + "&_=" + Date.now();
+      $("#purl").textContent = cardUrl(theme);
+      $("#md").textContent = `[![presence](${apiCardUrl(theme)})](${cardUrl(theme)})`;
+      $("#ifr").textContent = `<iframe src="${origin}/?theme=${theme}&embed" width="600" height="320" frameborder="0"></iframe>`;
+    });
+    $("#newkey").addEventListener("click", createKey);
+    loadKeys();
+  }
+
+  async function loadKeys() {
+    const { keys=[] } = await fetch("/api/keys").then(r => r.json());
+    $("#keylist").innerHTML = keys.length
+      ? keys.map(k => `<li><span class="grow">${esc(k.name)} <span class="muted">· ${k.key_id}</span></span>
+          <button class="danger" data-id="${k.key_id}">revoke</button></li>`).join("")
+      : `<li class="muted">no keys yet — create one to connect an agent</li>`;
+    $("#keylist").querySelectorAll("button[data-id]").forEach(b =>
+      b.addEventListener("click", () => revokeKey(b.dataset.id)));
+  }
+  async function createKey() {
+    const name = $("#keyname").value || "default";
+    const r = await fetch("/api/keys", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ name }) });
+    const data = await r.json();
+    if (r.ok) {
+      $("#reveal").innerHTML = `New key (copy now — shown once):<br><code style="padding:6px;display:inline-block;margin-top:4px">${esc(data.raw)}</code>`;
+      $("#keyname").value = ""; loadKeys();
+    } else $("#reveal").textContent = data.error || "error";
+  }
+  async function revokeKey(id) {
+    await fetch("/api/keys?key_id=" + encodeURIComponent(id), { method:"DELETE" });
+    loadKeys();
+  }
+
+  render();
+</script>
+</body>
+</html>
