@@ -7,6 +7,14 @@ to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
 ### Added
+- **Privacy / rules / override engine** (`presence_rules.py`): per-app rules
+  (relabel, hide, exclude, force-activity, redact-media), global privacy
+  switches (hide editor/media, invisible, pause-on-apps), and manual status
+  overrides ("fake status") with auto-expiry — resolved through one pipeline
+  whose allow-list serializer guarantees only the four card fields ever leave
+  the machine. 19 unit tests + a Python CI job. Config gains `rules`,
+  `overrides`, `privacy`, `theme`, `autostart` sections (deep-merged, so
+  existing configs are upgraded non-destructively).
 - **Hosted cloud service (beta)**: sign in with GitHub, claim a handle, get an
   API key, and publish to `/api/ingest` — your card lives at `/u/{handle}`.
   GitHub OAuth, per-user isolation, server-side payload sanitization, and

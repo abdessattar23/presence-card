@@ -23,12 +23,37 @@ ENV = {
     "card_url": "PRESENCE_CARD_URL",
 }
 DEFAULTS = {
+    "schema_version": 2,
     "gist_filename": "status.json",
     "api_base": "https://presence-neon.vercel.app",
     "card_url": "https://presence-neon.vercel.app/?theme=zellij",
+    "theme": "zellij",
+    "autostart": False,
+    # rules/override/privacy power the desktop app's control + privacy features
+    "rules": [],
+    "overrides": {"active": False, "activity": "", "editor": None, "media": None, "expires_at": None},
+    "privacy": {
+        "invisible": False,
+        "hide_editor": False,
+        "hide_media": False,
+        "idle_placeholder": "away",
+        "pause_on_apps": [],
+    },
 }
 
 _cache = None
+
+
+def _deep_merge(base: dict, override: dict) -> dict:
+    """Merge override onto base recursively (so loaded config keeps default
+    sub-keys for nested sections). Lists replace, scalars replace."""
+    out = dict(base)
+    for k, v in (override or {}).items():
+        if isinstance(v, dict) and isinstance(out.get(k), dict):
+            out[k] = _deep_merge(out[k], v)
+        else:
+            out[k] = v
+    return out
 
 
 def config_path() -> Path:
@@ -42,7 +67,9 @@ def _read() -> dict:
     p = config_path()
     if p.exists():
         try:
-            cfg.update(json.loads(p.read_text(encoding="utf-8")))
+            # deep-merge so a config that predates the rules/privacy sections
+            # still gets their defaults — non-destructive, no migration rewrite
+            cfg = _deep_merge(cfg, json.loads(p.read_text(encoding="utf-8")))
         except Exception:
             pass
     for key, env in ENV.items():
@@ -119,6 +146,20 @@ def save(values: dict) -> dict:
         except Exception:
             data = {}
     data.update({k: v for k, v in values.items() if v is not None})
+    p.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    return reload()
+
+
+def save_section(name: str, value) -> dict:
+    """Replace a whole nested section (rules list / overrides / privacy) atomically."""
+    p = config_path()
+    data = {}
+    if p.exists():
+        try:
+            data = json.loads(p.read_text(encoding="utf-8"))
+        except Exception:
+            data = {}
+    data[name] = value
     p.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     return reload()
 

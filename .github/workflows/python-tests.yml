@@ -1,0 +1,19 @@
+name: python tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile agents + config
+        run: python -m py_compile presence_config.py presence_rules.py presence_agent_macos.py presence_agent_linux.py
+      - name: Rules engine tests
+        run: python scripts/test_rules.py
