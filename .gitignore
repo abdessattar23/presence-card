@@ -11,3 +11,5 @@ windows/*.spec
 windows/icon.ico
 *.exe
 app/ui/_harness.html
+app/branding/icon_*.png
+linux/icons/

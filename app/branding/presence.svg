@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <!-- Presence mark: a khatim (8-point) star — the project's zellij identity —
+       in saffron on cobalt, with the live status dot at its heart. -->
+  <rect x="14" y="14" width="228" height="228" rx="46" fill="#0e2348"/>
+  <g fill="#e8b13c">
+    <rect x="51" y="51" width="154" height="154"/>
+    <rect x="51" y="51" width="154" height="154" transform="rotate(45 128 128)"/>
+  </g>
+  <g fill="#0e2348">
+    <rect x="86" y="86" width="84" height="84"/>
+    <rect x="86" y="86" width="84" height="84" transform="rotate(45 128 128)"/>
+  </g>
+  <circle cx="128" cy="128" r="22" fill="#39ff9e"/>
+</svg>

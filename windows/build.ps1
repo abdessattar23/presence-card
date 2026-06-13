@@ -9,8 +9,8 @@ try {
   python -m pip install -r requirements-windows.txt pyinstaller
   if ($LASTEXITCODE -ne 0) { throw "pip install failed ($LASTEXITCODE)" }
 
-  # generate the app icon (green phosphor dot) so the exe isn't the default blank
-  python -c "from PIL import Image, ImageDraw; im=Image.new('RGBA',(256,256),(0,0,0,0)); ImageDraw.Draw(im).ellipse((38,38,218,218), fill=(57,255,158,255)); im.save('windows/icon.ico', sizes=[(16,16),(24,24),(32,32),(48,48),(64,64),(128,128),(256,256)])"
+  # generate the khatim-star app icon + tray states from the single source
+  python app\branding\make_icons.py
   if ($LASTEXITCODE -ne 0) { throw "icon generation failed ($LASTEXITCODE)" }
 
   # --icon and --version-file are resolved relative to --specpath, so pass them

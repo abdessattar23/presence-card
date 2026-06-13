@@ -24,7 +24,9 @@ import presence_config
 import presence_core
 import presence_rules
 
-UI_DIR = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parent)) / "app" / "ui"
+_BASE = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parent))
+UI_DIR = _BASE / "app" / "ui"
+BRAND_DIR = _BASE / "app" / "branding"
 
 
 def fetch_whoami(cfg):
@@ -185,23 +187,28 @@ class App:
             return False
 
     # -- tray ---------------------------------------------------------------
-    def _tray_image(self, color):
-        from PIL import Image, ImageDraw
-        img = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
-        ImageDraw.Draw(img).ellipse((12, 12, 52, 52), fill=color)
-        return img
-
-    def sync_tray(self):
-        if not self.icon:
-            return
+    def _tray_state(self):
         priv = presence_config.get().get("privacy", {})
         if priv.get("invisible"):
-            color = (120, 120, 130, 255)
-        elif self.engine.paused():
-            color = (255, 180, 84, 255)
-        else:
-            color = (57, 255, 158, 255)
-        self.icon.icon = self._tray_image(color)
+            return "private"
+        return "paused" if self.engine.paused() else "live"
+
+    def _tray_image(self):
+        from PIL import Image, ImageDraw
+        state = self._tray_state()
+        png = BRAND_DIR / f"tray-{state}.png"
+        try:
+            return Image.open(png)
+        except Exception:
+            col = {"private": (120, 120, 130, 255), "paused": (255, 180, 84, 255),
+                   "live": (57, 255, 158, 255)}[state]
+            img = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
+            ImageDraw.Draw(img).ellipse((12, 12, 52, 52), fill=col)
+            return img
+
+    def sync_tray(self):
+        if self.icon:
+            self.icon.icon = self._tray_image()
 
     def start_tray(self):
         import pystray
@@ -216,9 +223,8 @@ class App:
             pystray.Menu.SEPARATOR,
             pystray.MenuItem("Quit", lambda i, it: self.quit()),
         )
-        self.icon = pystray.Icon(APP_NAME, self._tray_image((57, 255, 158, 255)), "Presence", menu)
+        self.icon = pystray.Icon(APP_NAME, self._tray_image(), "Presence", menu)
         self.icon.run_detached()
-        self.sync_tray()
 
     def _toggle_pause(self):
         self.engine.pause(not self.engine.paused())
