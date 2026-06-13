@@ -6,6 +6,15 @@ to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.2.1] — 2026-06-13
+
+### Fixed
+- **Desktop app UI was unresponsive** (clicks did nothing): the packaged app
+  loaded the UI over `file://`, where Chromium/WebView2 blocks `<script
+  type="module">` imports (origin `null`), so the panel's JavaScript never ran.
+  The app now serves its UI over a local `http://127.0.0.1` server rooted at
+  the bundle, so modules load and the panel is interactive.
+
 ## [0.2.0] — 2026-06-13
 
 ### Added
@@ -79,7 +88,8 @@ First public release.
 - **CI** validating every theme on each PR, plus issue templates and a PR
   checklist.
 
-[Unreleased]: https://github.com/abdessattar23/presence-card/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/abdessattar23/presence-card/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/abdessattar23/presence-card/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/abdessattar23/presence-card/compare/v0.1.2...v0.2.0
 [0.1.2]: https://github.com/abdessattar23/presence-card/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/abdessattar23/presence-card/compare/v0.1.0...v0.1.1

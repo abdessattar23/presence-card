@@ -243,13 +243,32 @@ class App:
         if self.window:
             self.window.destroy()
 
+    def _serve_ui(self):
+        """Serve the UI over http://127.0.0.1 (NOT file://) — Chromium/WebView2
+        blocks ES-module imports over file://, which would leave the panel dead
+        to clicks. Rooted at the bundle base so ../../lib + ../../themes resolve."""
+        import http.server
+        import socketserver
+        import functools
+
+        class _Quiet(http.server.SimpleHTTPRequestHandler):
+            def log_message(self, *a):
+                pass
+
+        handler = functools.partial(_Quiet, directory=str(_BASE))
+        httpd = socketserver.ThreadingTCPServer(("127.0.0.1", 0), handler)
+        httpd.daemon_threads = True
+        threading.Thread(target=httpd.serve_forever, daemon=True).start()
+        return httpd.server_address[1]
+
     def run(self):
         threading.Thread(target=self.engine.run, daemon=True).start()
         self.start_tray()
+        port = self._serve_ui()
         import webview
-        self.window = webview.create_window("Presence", str(UI_DIR / "index.html"),
-                                            js_api=Api(self), width=760, height=620,
-                                            min_size=(620, 520))
+        self.window = webview.create_window(
+            "Presence", f"http://127.0.0.1:{port}/app/ui/index.html",
+            js_api=Api(self), width=760, height=620, min_size=(620, 520))
         webview.start()
         self.quit()
 
