@@ -84,6 +84,12 @@ python presence_agent.py
 
 Your card is live at `presence-neon.vercel.app/u/<handle>`. No database to run.
 
+Prefer a GUI? Grab the **Presence desktop app** from
+[Releases](https://github.com/abdessattar23/presence-card/releases) — a tray app
+with a control panel to paste your key, preview your card live, **override your
+status**, set per-app **rules**, and **hide** apps. Privacy-by-default: only
+coarse activity + app + track ever leave your machine.
+
 ### Self-hosted (bring your own Upstash)
 
 **1 · Storage (free):** create a database at [upstash.com](https://upstash.com),

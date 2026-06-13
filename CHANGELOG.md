@@ -6,7 +6,18 @@ to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-06-13
+
 ### Added
+- **Desktop app** (`presence_app.py`): a system-tray app with a pywebview
+  control panel — Preview (the real card, live), Override ("fake status" with
+  auto-clear), Rules, Privacy (hide editor/media, invisible, pause-on-apps),
+  Appearance, and Account (cloud key or self-host). Backed by the shared
+  `presence_core` Engine (detect → rules → publish). Windows exe builds and
+  launches; macOS/Linux ship the runnable source (native build scripts are
+  experimental).
+- **New icon**: the khatim 8-point star with a live status dot, generated from
+  one source (`app/branding/`) into the app, four tray states, and the favicon.
 - **Privacy / rules / override engine** (`presence_rules.py`): per-app rules
   (relabel, hide, exclude, force-activity, redact-media), global privacy
   switches (hide editor/media, invisible, pause-on-apps), and manual status
@@ -68,7 +79,8 @@ First public release.
 - **CI** validating every theme on each PR, plus issue templates and a PR
   checklist.
 
-[Unreleased]: https://github.com/abdessattar23/presence-card/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/abdessattar23/presence-card/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/abdessattar23/presence-card/compare/v0.1.2...v0.2.0
 [0.1.2]: https://github.com/abdessattar23/presence-card/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/abdessattar23/presence-card/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/abdessattar23/presence-card/releases/tag/v0.1.0

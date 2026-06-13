@@ -23,9 +23,10 @@ jobs:
           for os in macos linux; do
             stage="presence-$os"
             mkdir -p "$stage"
-            cp presence_config.py presence.config.example.json LICENSE "$stage/"
+            cp presence_config.py presence_core.py presence_rules.py presence_app.py \
+               presence.config.example.json requirements-common.txt LICENSE "$stage/"
             cp "presence_agent_$os.py" "$stage/"
-            cp -r "$os" "$stage/$os"
+            cp -r "$os" app themes lib "$stage/"
             tar czf "presence-$os-$ver.tar.gz" "$stage"
           done
           ls -1 presence-*.tar.gz
